@@ -1,0 +1,375 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Umbro · Performance e Lifestyle</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500;600&family=Outfit:wght@800&family=Archivo:wdth,wght@125,800;125,900&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:#181818;color:#cfcfcf;font-family:Barlow,system-ui,sans-serif;min-height:100vh}
+  button{font:inherit}
+  a{color:inherit;text-decoration:none}
+
+  /* ---------- Barra da apresentação ---------- */
+  .pres{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:18px 24px}
+  .pres h1{font:800 20px/1 "Barlow Condensed";letter-spacing:.08em;text-transform:uppercase;color:#fff}
+  .pres h1 span{color:#8a8a8a;font-weight:600}
+  .views{display:flex;border:1.5px solid #fff}
+  .views button{all:unset;cursor:pointer;display:flex;align-items:center;gap:8px;padding:10px 18px;font:700 15px/1 "Barlow Condensed";letter-spacing:.12em;text-transform:uppercase;color:#fff}
+  .views button.on{background:#fff;color:#111}
+  .views svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8}
+  .views button:focus-visible{outline:3px solid #2f6bff;outline-offset:2px}
+  .stage{padding:0 24px 48px;display:flex;justify-content:center}
+  [hidden]{display:none !important}
+
+  /* ---------- Tema por linha (vale para as duas versões) ---------- */
+  .site{--ink:#111;--paper:#fff;--line:#e6e6e6;--muted:#555;background:var(--paper);color:var(--ink)}
+  .site[data-line="lifestyle"]{--ink:#fff;--paper:#000;--line:#2a2a2a;--muted:#b0b0b0}
+  .disp{font-family:"Barlow Condensed",sans-serif;font-weight:800;text-transform:uppercase;letter-spacing:.01em}
+  .site[data-line="lifestyle"] .disp{font-family:Archivo,sans-serif;font-stretch:125%;font-weight:900;letter-spacing:.01em}
+
+  /* Logo oficial */
+  .logo{display:flex;align-items:center;color:var(--ink)}
+  .logo .mk{width:auto;display:none}
+  .site[data-line="performance"] .logo .perf,
+  .site[data-line="lifestyle"] .logo .life{display:block}
+  .ico{width:22px;height:22px;stroke:var(--ink);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+
+  /* Seletor de linha */
+  .seg{display:grid;grid-template-columns:1fr 1fr;border:2px solid var(--ink)}
+  .seg button{all:unset;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;color:var(--ink)}
+  .seg button.on{background:var(--ink);color:var(--paper)}
+  .seg button:focus-visible{outline:3px solid #2f6bff;outline-offset:-3px}
+  .seg .dm{width:auto;flex:none}
+  .seg [data-set="performance"] span{font:800 1em/1 Outfit,sans-serif;letter-spacing:-.02em;text-transform:lowercase}
+  .seg [data-set="lifestyle"] span{font:900 .75em/1 Archivo,sans-serif;font-stretch:125%;letter-spacing:.02em;text-transform:uppercase}
+
+  /* Banner de coleção (foto + nome) */
+  .banner{position:relative;display:flex;align-items:flex-end;overflow:hidden;color:#fff;background:#222}
+  .banner img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .6s cubic-bezier(.2,.7,.2,1)}
+  .banner:hover img{transform:scale(1.03)}
+  .banner::after{content:"";position:absolute;inset:40% 0 0;background:linear-gradient(transparent,rgba(0,0,0,.55))}
+  .banner b{position:relative;z-index:1}
+
+  /* =========================================================
+     VERSÃO COMPUTADOR
+     ========================================================= */
+  .browser{width:100%;max-width:1360px;border-radius:10px;overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,.5)}
+  .chrome{background:#2b2b2b;display:flex;align-items:center;gap:14px;padding:10px 14px}
+  .dots{display:flex;gap:7px}.dots i{width:12px;height:12px;border-radius:50%;background:#555}
+  .url{flex:1;max-width:520px;margin:0 auto;background:#1c1c1c;border-radius:6px;padding:6px 12px;font-size:13px;color:#aaa;text-align:center}
+  .desk{position:relative}
+  .d-top{background:#000;color:#fff;font:600 12px/1 Barlow;letter-spacing:.1em;text-transform:uppercase;text-align:center;padding:9px}
+  .site[data-line="lifestyle"] .d-top{background:#fff;color:#000}
+  .d-head{position:relative;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:32px;padding:0 40px;height:84px;border-bottom:1px solid var(--line);background:var(--paper)}
+  .d-head .logo .mk{height:52px}
+  .d-nav{display:flex;justify-content:center;height:100%}
+  .d-nav > div{height:100%;display:flex;align-items:center}
+  .d-nav > div > a{display:flex;align-items:center;height:100%;padding:0 18px;font-size:19px;border-bottom:3px solid transparent}
+  .site[data-line="lifestyle"] .d-nav > div > a{font-size:14px}
+  .d-nav > div:hover > a,.d-nav > div:focus-within > a{border-bottom-color:var(--ink)}
+  .d-right{display:flex;align-items:center;gap:22px}
+  .d-right .seg{width:300px;height:42px;font-size:17px}
+  .d-right .seg .dm{height:12px}
+  .d-right .icons{display:flex;gap:18px}
+
+  .mega{position:absolute;left:0;right:0;top:100%;z-index:10;background:var(--paper);border-bottom:1px solid var(--line);box-shadow:0 24px 40px rgba(0,0,0,.12);display:none;padding:32px 40px 40px;grid-template-columns:repeat(4,minmax(0,1fr)) 1.3fr;gap:32px}
+  .d-nav > div:hover .mega,.d-nav > div:focus-within .mega{display:grid}
+  .mega h4{font-size:18px;padding-bottom:10px;margin-bottom:8px;border-bottom:2px solid var(--ink)}
+  .site[data-line="lifestyle"] .mega h4{font-size:13px}
+  .mega .gl{font:600 11px/1 Barlow;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:14px 0 6px}
+  .mega a{display:block;padding:5px 0;font-size:15px;color:var(--ink)}
+  .mega a:hover{text-decoration:underline;text-underline-offset:3px}
+  .mega .banner{grid-column:5;aspect-ratio:4/3;padding:16px}
+  .mega .banner b{font-size:24px}
+  .site[data-line="lifestyle"] .mega .banner b{font-size:15px}
+
+  .d-hero{height:560px;padding:40px}
+  .d-hero b{font-size:84px;line-height:.9}
+  .site[data-line="lifestyle"] .d-hero b{font-size:52px}
+  .d-hero .cta{position:absolute;right:40px;bottom:44px;z-index:1;border:2px solid #fff;padding:14px 26px;font:700 14px/1 Barlow;letter-spacing:.14em;text-transform:uppercase}
+  .d-grid{display:grid}
+  .d-grid .banner{aspect-ratio:4/5;padding:24px}
+  .d-grid .banner b{font-size:30px;line-height:.95}
+  .site[data-line="lifestyle"] .d-grid .banner b{font-size:17px;line-height:1.1}
+  .d-sec{padding:56px 40px}
+  .d-sec h2{font-size:40px;margin-bottom:22px}
+  .site[data-line="lifestyle"] .d-sec h2{font-size:26px}
+  .d-cats{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
+  .d-cats a{border:2px solid var(--ink);padding:22px 18px;display:flex;flex-direction:column;gap:8px}
+  .d-cats a small{font:600 11px/1 Barlow;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+  .d-cats a b{font-size:24px}
+  .site[data-line="lifestyle"] .d-cats a b{font-size:15px}
+  .d-cats a:hover{background:var(--ink);color:var(--paper)}
+  .d-cats a:hover small{color:var(--paper)}
+  .d-foot{padding:28px 40px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--muted)}
+  .d-foot .logo .mk{height:36px}
+
+  /* =========================================================
+     VERSÃO CELULAR
+     ========================================================= */
+  .phone{width:390px;max-width:100%;height:min(820px,calc(100vh - 110px));min-height:640px;border:10px solid #000;border-radius:44px;overflow:hidden;position:relative;box-shadow:0 30px 80px rgba(0,0,0,.5);display:flex;flex-direction:column}
+  .m-status{height:34px;flex:none;display:flex;justify-content:space-between;align-items:center;padding:6px 26px 0;font:600 13px/1 Barlow;color:var(--ink);background:var(--paper)}
+  .m-top{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:8px 20px 14px;background:var(--paper)}
+  .m-top .grp{display:flex;gap:20px;align-items:center}
+  .m-top .grp:last-child{justify-content:flex-end}
+  .m-top .logo .mk{height:44px}
+  .m-top button{all:unset;cursor:pointer;display:flex}
+  .phone .seg{margin:0 20px;height:50px;font-size:18px;flex:none}
+  .phone .seg .dm{height:13px}
+  .m-scroll{flex:1;overflow-y:auto;margin-top:16px}
+  .m-scroll::-webkit-scrollbar,.panel::-webkit-scrollbar{display:none}
+  .m-grid{display:grid;grid-template-columns:1fr 1fr}
+  .m-grid .banner{aspect-ratio:1;padding:14px}
+  .m-grid .banner.wide{grid-column:1/-1;aspect-ratio:4/5}
+  .m-grid .banner b{font-size:21px;line-height:.95}
+  .m-grid .banner.wide b{font-size:34px}
+  .site[data-line="lifestyle"] .m-grid .banner b{font-size:13px;line-height:1.1}
+  .site[data-line="lifestyle"] .m-grid .banner.wide b{font-size:20px}
+  .m-cats{padding:28px 20px}
+  .m-cats h2{font-size:24px;margin-bottom:12px}
+  .site[data-line="lifestyle"] .m-cats h2{font-size:16px}
+
+  /* Menu (gaveta) */
+  .drawer{position:absolute;inset:0;z-index:5;background:var(--paper);display:flex;flex-direction:column;transform:translateX(-100%);transition:transform .35s cubic-bezier(.6,0,.2,1)}
+  .drawer.open{transform:none}
+  .viewport{position:relative;flex:1;overflow:hidden;margin-top:6px}
+  .panel{position:absolute;inset:0;overflow-y:auto;padding:16px 20px 28px;background:var(--paper);transition:transform .35s cubic-bezier(.6,0,.2,1)}
+  .panel.sub{transform:translateX(100%)}
+  .panel.sub.open{transform:none}
+  .panel.root.pushed{transform:translateX(-30%)}
+  .kicker{font-size:13px;color:var(--muted);margin-bottom:12px}
+  .panel h3{font-size:26px;padding-bottom:12px;border-bottom:2px solid var(--ink)}
+  .panel h3 + ul{margin-bottom:30px}
+  ul{list-style:none}
+  .row{appearance:none;background:none;border:0;text-align:left;box-sizing:border-box;cursor:pointer;width:100%;display:flex;justify-content:space-between;align-items:center;padding:16px 0;border-bottom:1px solid var(--line);font-size:21px;font-weight:700;color:var(--ink)}
+  .row .ico{width:20px;height:20px;stroke-width:2.2}
+  .row.leaf{font-weight:600;font-size:19px}
+  .site[data-line="lifestyle"] .panel h3{font-size:19px;padding-bottom:14px}
+  .site[data-line="lifestyle"] .row{font-size:14px;padding:18px 0}
+  .site[data-line="lifestyle"] .row.leaf{font-size:12.5px;font-weight:800}
+  .group-label{font:600 12px/1 Barlow;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:22px 0 2px}
+  .back{all:unset;cursor:pointer;display:flex;gap:6px;align-items:center;font:600 13px/1 Barlow;color:var(--muted);margin-bottom:14px}
+  .back .ico{width:16px;height:16px;stroke:var(--muted)}
+  .seeall{display:block;margin-top:18px;font-size:15px;text-decoration:underline;text-underline-offset:4px}
+  .site[data-line="lifestyle"] .seeall{font-size:12px}
+
+  @media (max-width:1100px){
+    .d-head{grid-template-columns:auto 1fr;padding:0 24px}
+    .d-nav{display:none}
+    .d-hero b{font-size:56px}
+  }
+</style>
+</head>
+<body>
+
+<div class="pres">
+  <h1>Umbro <span>· Performance e Lifestyle</span></h1>
+  <div class="views" role="tablist" aria-label="Visualização">
+    <button class="on" data-view="desk" role="tab"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="1"/><path d="M8 20h8M12 16v4"/></svg>Computador</button>
+    <button data-view="mob" role="tab"><svg viewBox="0 0 24 24"><rect x="7" y="2.5" width="10" height="19" rx="2"/><path d="M11 18.5h2"/></svg>Celular</button>
+  </div>
+</div>
+
+<div class="stage">
+  <!-- Computador -->
+  <div class="browser" id="v-desk">
+    <div class="chrome"><div class="dots"><i></i><i></i><i></i></div><div class="url">umbro.com.br</div></div>
+    <div class="site desk" id="desk"></div>
+  </div>
+  <!-- Celular -->
+  <div class="phone site" id="v-mob" hidden></div>
+</div>
+
+<template id="logos"><svg class="mk perf" role="img" aria-label="Umbro Performance" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 511.39 332.14" fill="currentColor"><path fill-rule="nonzero" d="M253.68 137.74C254.77 138.18 256.6 138.18 257.69 137.74L314.18 114.11C314.97 113.77 314.97 113.23 314.18 112.89L257.69 89.3C256.6 88.85 254.77 88.85 253.68 89.3L197.22 112.89C196.42 113.23 196.42 113.77 197.22 114.11L253.68 137.74M374.42 108.03C376.53 108.97 377.98 111.05 377.98 113.52C377.98 115.97 376.51 118.05 374.42 118.98L260.14 166.78C257.69 167.82 253.71 167.82 251.27 166.78L136.97 118.98C134.89 118.05 133.39 115.97 133.39 113.52C133.39 111.05 134.89 108.97 136.97 108.02L251.27 60.23C253.71 59.22 257.69 59.22 260.14 60.23L374.42 108.03M503.99 102.06C508.38 104 511.39 108.39 511.39 113.52C511.39 118.64 508.32 123.02 503.92 124.97L264.92 224.92C259.85 227.03 251.54 227.03 246.46 224.92L7.45 124.97C3.04 123.02 0 118.64 0 113.52C0 108.39 3.04 103.97 7.45 102.03L246.46 2.12C251.54 0 259.85 0 264.92 2.12L503.99 102.06M248.85 31.2L56.86 111.45C54.15 112.6 54.15 114.42 56.86 115.57L248.85 195.87C252.61 197.42 258.76 197.42 262.52 195.87L454.51 115.57C457.23 114.42 457.23 112.6 454.51 111.45L262.52 31.2C258.76 29.62 252.61 29.62 248.85 31.2"/><path fill-rule="nonzero" d="M352.47 276.81L352.21 276.81L352.21 264.64L331.45 264.64L331.45 330.64L354.25 330.64L354.25 302.76C354.25 289.83 360.21 282.12 370.84 282.12C373.49 282.12 375.98 282.12 378.5 282.84L378.5 263.67C376.51 263.37 374.2 263.1 371.96 263.1C362.12 263.1 356.41 268.44 352.47 276.81"/><path fill-rule="nonzero" d="M288.84 315.57C280.89 315.57 274.27 308.03 274.27 297.95C274.27 287.61 280.08 279.94 288.84 279.94C298.12 279.94 303.3 287.87 303.3 297.03C303.3 308.03 297.84 315.57 288.84 315.57M297.86 263.06C288.75 263.06 281.03 265.72 275.21 273.05L274.95 273.05L274.95 241.25L252.02 241.25L252.02 330.57L273.03 330.57L273.03 318.8L273.28 318.8C276.2 326.17 285.47 332.1 295.99 332.1C315.6 332.1 326.13 315.89 326.13 296.38C326.13 280.4 316.1 263.06 297.86 263.06"/><path fill-rule="nonzero" d="M220.71 263.1C211.35 263.1 202.6 266.9 197.28 275.79C193.74 267.16 186 263.1 176.62 263.1C166.25 263.1 157.12 267.27 152.55 276.81L152.33 276.81L152.33 264.64L131.55 264.64L131.55 330.64L154.36 330.64L154.36 302.76C154.36 288.57 159.15 282.12 167.27 282.12C173.72 282.12 176.39 287.7 176.39 295.16L176.39 330.64L199.2 330.64L199.2 302.76C199.2 288.57 204.02 282.12 212.1 282.12C218.58 282.12 221.23 287.7 221.23 295.16L221.23 330.64L244.04 330.64L244.04 291.74C244.04 273.87 239.72 263.1 220.71 263.1"/><path fill-rule="nonzero" d="M402.02 297.88C402.02 286.38 408.48 278.02 417.98 278.02C428.12 278.02 433.84 286.68 433.84 296.82C433.84 309.05 427.82 317.27 417.98 317.27C409.35 317.27 402.02 309.03 402.02 297.88M418.22 263.1C396.42 263.1 379.82 275.79 379.82 297.7C379.82 319.51 396.42 332.14 418.22 332.14C439.99 332.14 456.58 319.51 456.58 297.7C456.58 275.79 439.99 263.1 418.22 263.1"/><path fill-rule="nonzero" d="M54.77 264.64L54.77 301.99C54.77 323.14 69.66 332.14 88.93 332.14C108.17 332.14 123.07 323.14 123.07 301.99L123.07 264.64L100.29 264.64L100.29 300.15C100.29 308.28 98.28 315.57 88.93 315.57C79.53 315.57 77.52 308.28 77.52 300.15L77.52 264.64L54.77 264.64"/></svg><svg class="mk life" role="img" aria-label="Umbro Lifestyle" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 543.32 315.71" fill="currentColor"><path fill-rule="nonzero" d="M270.38 200.59C269.15 200.07 89.36 122.14 82.99 119.38C89.34 116.6 269.14 37.62 270.38 37.09C271.61 37.62 451.53 116.6 457.89 119.38C451.53 122.14 271.6 200.07 270.38 200.59M270.43 -0.28L269.8 0L0 119.4L270.43 237.91L543.32 119.4L270.43 -0.28"/><path fill-rule="nonzero" d="M211.26 119.39C216.97 116.82 270.84 92.62 272.02 92.07C273.22 92.6 328.04 116.81 333.87 119.39C328.04 121.96 273.22 146.16 272.02 146.69C270.84 146.15 216.97 121.95 211.26 119.39M271.95 61.86L271.32 62.14L141.57 119.4L271.95 176.38L401.74 119.4L271.95 61.86"/><path fill-rule="nonzero" d="M47.42 315.71C94.42 315.71 94.42 299.87 94.42 295.69L94.42 248.18L58.4 248.18L58.4 293.71C58.4 296.2 56.14 302.58 47.16 302.58C38.13 302.58 37.02 294.74 37.02 294.71L37.02 248.18L0 248.18L0 295.69C0 299.15 0.27 315.71 47.42 315.71"/><path fill-rule="nonzero" d="M140.85 314.72L140.85 284.3C143.9 284.3 158.02 314.72 158.02 314.72L171.41 314.72C171.41 314.72 187.16 284.3 189.73 284.3L189.73 314.72L222.13 314.72L222.13 248.18L184.07 248.18C184.07 248.18 177.13 252.65 165.58 275.88C154.45 252.65 147.73 248.18 147.73 248.18L108.6 248.18L108.6 314.72L140.85 314.72"/><path fill-rule="nonzero" d="M285.68 302.36C285.68 302.36 292.09 301.12 292.09 294.22C292.09 287.26 285.68 286.29 285.68 286.29L272.55 286.29L272.55 302.36L285.68 302.36M284.63 274.64C284.63 274.64 289.88 273.92 289.88 268.2C289.88 262.51 284.63 261.77 284.63 261.77L272.55 261.77L272.55 274.64L284.63 274.64M235.57 314.72L235.57 248.18L308.73 248.18C313.25 248.18 328.85 252.38 328.85 264.98C328.85 277.6 317.29 281.58 317.29 281.58C317.29 281.58 331.42 284.3 331.42 298.67C331.42 313.73 314.62 314.72 314.62 314.72L235.57 314.72"/><path fill-rule="nonzero" d="M392.02 277.77C392.02 277.77 398.69 276.81 398.69 269.46C398.69 262.08 392.02 261.11 392.02 261.11L377.01 261.11L377.01 277.77L392.02 277.77M377.01 291.41L377.01 314.72L341.72 314.72L341.72 248.18L410.36 248.18C426.26 248.18 436.82 255.52 436.82 268.13C436.82 284.42 422 289.27 422 289.27L438.92 314.72L396.7 314.72L377.01 291.41"/><path fill-rule="nonzero" d="M496.79 303.7C500.15 303.7 504.98 299.85 504.98 285.29L504.98 277.69C504.98 262.55 500.15 259.31 496.79 259.31L492.96 259.31C489.49 259.31 484.55 262.55 484.55 277.69L484.55 285.29C484.55 299.85 489.49 303.7 492.96 303.7L496.79 303.7M486.07 314.87C469.68 314.87 446.16 315.34 446.16 287.2L446.16 275.78C446.16 248.44 469.68 248.18 486.07 248.18L504.4 248.18C520.16 248.18 543.32 249.15 543.32 275.78L543.32 287.2C543.32 314.64 520.16 314.87 504.4 314.87L486.07 314.87"/></svg></template>
+
+<script>
+const I = {
+  x:'<svg class="ico" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg>',
+  menu:'<svg class="ico" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg>',
+  heart:'<svg class="ico" viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>',
+  search:'<svg class="ico" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="m20 20-4-4"/></svg>',
+  bag:'<svg class="ico" viewBox="0 0 24 24"><path d="M6 8h12l-1 12H7z"/><path d="M9 8V6.5a3 3 0 0 1 6 0V8"/></svg>',
+  chev:'<svg class="ico" viewBox="0 0 24 24"><path d="m9 5 7 7-7 7"/></svg>',
+  back:'<svg class="ico" viewBox="0 0 24 24"><path d="m15 5-7 7 7 7"/></svg>'
+};
+
+// fotos das campanhas no CDN do umbro.com
+const IMG = (path, w, h) => `https://cdn-umbroglobal-media.azureedge.net/${path}?anchor=center&mode=crop&width=${w}&height=${h}&format=webp`;
+const ACESSORIOS_ESPORTE = ['Bolas','Caneleiras','Luvas de goleiro','Meias e meiões','Bolsas e mochilas','Apito e cartões','Joelheira e cotoveleira'];
+
+/* Estrutura proposta, com nomes do menu atual do umbro.com.br */
+const DATA = {
+  performance:{
+    kicker:'Linha de futebol', top:'Frete grátis e Pix · Linha de futebol',
+    sections:[
+      {title:'Calçados', items:[
+        {name:'Masculino', groups:[{label:'Chuteiras',items:['Campo','Society','Futsal']},{label:'Treino',items:['Tênis']}]},
+        {name:'Feminino',  groups:[{label:'Chuteiras',items:['Campo','Society','Futsal']},{label:'Treino',items:['Tênis']}]},
+        {name:'Infantil',  groups:[{label:'Chuteiras',items:['Campo','Society','Futsal','Velcro']}]}
+      ]},
+      {title:'Vestuário', items:[
+        {name:'Masculino', groups:[{label:'Para jogar e treinar',items:['Camisas e camisetas','Regatas','Calções','Shorts e bermudas','Calças','Blusões e jaquetas','Sungas']},{label:'Clubes',items:['Athletico PR','Santos']}]},
+        {name:'Feminino',  groups:[{label:'Para jogar e treinar',items:['Camisas e camisetas','Regatas e tops','Calções e shorts']},{label:'Clubes',items:['Athletico PR','Santos']}]},
+        {name:'Infantil',  groups:[{label:'Para jogar',items:['Camisas para jogar','Bermudas e calções','Calças','Kit clube']}]},
+        {name:'Acessórios',groups:[{label:'Esporte',items:ACESSORIOS_ESPORTE},{label:'Para sua equipe',items:['Coletes','Camisas','Calção','Calça']}]}
+      ]}
+    ],
+    banners:[
+      {t:'Tocco VI', img:'fpgnlqmu/7-aw26-boots-3x4-_0011_vector-smart-object.jpg'},
+      {t:'Velocita XI', img:'p1sbcxzg/6-aw26-boots-3x4-_0041_vector-smart-object.jpg'},
+      {t:'Léopards: home kit RDC', img:'qw3fajol/_0004_umbro_shirts_sl_white_3.jpg'}
+    ]
+  },
+  lifestyle:{
+    kicker:'Linha streetwear', top:'Frete grátis e Pix · Linha streetwear',
+    sections:[
+      {title:'Streetwear', items:[
+        {name:'Masculino', groups:[{label:'Roupas',items:['Camisas e camisetas','Polos','Shorts e bermudas','Calças','Blusões e jaquetas','Agasalhos']},{label:'Sneakers',items:['Tênis Court','Trainer']}]},
+        {name:'Feminino',  groups:[{label:'Roupas',items:['Camisas e camisetas','Calças e leggings','Blusões e jaquetas','Agasalhos','Vestidos e saias']},{label:'Sneakers',items:['Tênis Court','Trainer']}]},
+        {name:'Acessórios',groups:[{label:'Acessórios',items:['Gorros e bonés','Bolsas e mochilas','Meias']}]},
+        {name:'Collabs',   groups:[{label:'Collabs',items:['Boiler Room x Umbro','Slam Jam x Umbro','KondZilla x Umbro','Carnan x Umbro','High x Umbro','Tardezinha x Umbro','Coala Music x Umbro']}]}
+      ]}
+    ],
+    banners:[
+      {t:'AW26 Away Days', img:'xm4mf53u/aw26-away-days2.jpg'},
+      {t:'AW26 Slam Jam', img:'3xlltxx5/campaign_11.png'},
+      {t:'Stine Goya x Umbro', img:'iholegc0/000077530016-3-copy.jpg'},
+      {t:'Pikol Clothing x Umbro', img:'1yunrdas/r0030180.jpg'},
+      {t:'Perks and Mini x Umbro', img:'5tbdaikl/pam-x-umbro-1-_-06.jpeg'}
+    ]
+  }
+};
+
+let line = 'performance';
+const LOGOS = document.getElementById('logos').innerHTML;
+const logoHTML = () => `<a href="#" class="logo" aria-label="Umbro">${LOGOS}</a>`;
+const segHTML = () => `<div class="seg" role="tablist" aria-label="Linha">
+  <button data-set="performance" role="tab"><span>performance</span></button>
+  <button data-set="lifestyle" role="tab"><span>Lifestyle</span></button></div>`;
+const banner = (b, w, h, cls='') => `<a class="banner ${cls}" href="#"><img src="${IMG(b.img,w,h)}" alt=""><b class="disp">${b.t}</b></a>`;
+
+/* losango de cada logo oficial dentro do botão da sua linha */
+function addDiamonds(root){
+  root.querySelectorAll('.seg').forEach(seg => {
+    [['performance','.perf','0 0 511.39 227.1'],['lifestyle','.life','0 0 543.32 238']].forEach(([k,sel,vb]) => {
+      const b = seg.querySelector(`[data-set="${k}"]`);
+      if (b.querySelector('.dm')) return;
+      const dm = root.querySelector('.logo '+sel).cloneNode(true);
+      dm.setAttribute('class','dm'); dm.setAttribute('viewBox',vb);
+      dm.removeAttribute('role'); dm.removeAttribute('aria-label'); dm.setAttribute('aria-hidden','true');
+      b.prepend(dm);
+    });
+  });
+}
+
+/* ---------- Computador ---------- */
+function navItems(){
+  const d = DATA[line];
+  // Performance: Calçados / Vestuário → colunas por público
+  // Lifestyle: Masculino / Feminino / Acessórios / Collabs → colunas por grupo
+  if (line === 'performance') return d.sections.map(s => ({name:s.title, cols:s.items.map(it => ({h:it.name, groups:it.groups}))}));
+  return d.sections[0].items.map(it => ({name:it.name, cols:it.groups.map(g => ({h:g.label, groups:[{items:g.items}]}))}));
+}
+function renderDesk(){
+  const d = DATA[line], el = document.getElementById('desk');
+  const [hero, ...rest] = d.banners;
+  const nav = navItems().map((n,i) => `<div><a href="#" class="disp">${n.name}</a>
+    <div class="mega">${n.cols.map(c => `<div><h4 class="disp">${c.h}</h4>${c.groups.map(g => (g.label && c.groups.length>1 ? `<p class="gl">${g.label}</p>`:'') + g.items.map(x => `<a href="#">${x}</a>`).join('')).join('')}</div>`).join('')}
+    ${banner(d.banners[i % d.banners.length], 640, 480)}</div></div>`).join('');
+  const cats = line === 'performance'
+    ? d.sections.flatMap(s => s.items.map(it => `<a href="#"><small>${s.title}</small><b class="disp">${it.name}</b></a>`)).join('')
+    : d.sections[0].items.map((it,i) => `<a href="#"><small>0${i+1}</small><b class="disp">${it.name}</b></a>`).join('');
+  el.innerHTML = `
+    <div class="d-top">${d.top}</div>
+    <header class="d-head">${logoHTML()}<nav class="d-nav">${nav}</nav>
+      <div class="d-right">${segHTML()}<div class="icons">${I.search}${I.heart}${I.bag}</div></div></header>
+    <a class="banner d-hero" href="#"><img src="${IMG(hero.img,1800,700)}" alt=""><b class="disp">${hero.t}</b><span class="cta">Ver coleção</span></a>
+    <div class="d-grid" style="grid-template-columns:repeat(${rest.length},1fr)">${rest.map(b => banner(b, 700, 875)).join('')}</div>
+    <section class="d-sec"><h2 class="disp">${line==='performance'?'Compre por categoria':'Navegue'}</h2><div class="d-cats">${cats}</div></section>
+    <footer class="d-foot">${logoHTML()}<span>Mockup de proposta · arquitetura de marca Performance / Lifestyle</span></footer>`;
+  addDiamonds(el);
+}
+
+/* ---------- Celular ---------- */
+function rootHTML(){
+  const d = DATA[line];
+  let h = `<p class="kicker">${d.kicker}</p>`;
+  d.sections.forEach((s,si) => {
+    h += `<h3 class="disp">${s.title}</h3><ul>`;
+    s.items.forEach((it,ii) => h += `<li><button class="row disp" data-s="${si}" data-i="${ii}">${it.name}${I.chev}</button></li>`);
+    h += `</ul>`;
+  });
+  return h;
+}
+function subHTML(si, ii){
+  const sec = DATA[line].sections[si], it = sec.items[ii];
+  let h = `<button class="back">${I.back}${sec.title}</button><h3 class="disp">${it.name}</h3>`;
+  it.groups.forEach(g => {
+    h += `<p class="group-label">${g.label}</p><ul>` + g.items.map(x => `<li><a class="row leaf disp" href="#">${x}${I.chev}</a></li>`).join('') + `</ul>`;
+  });
+  return h + `<a class="seeall disp" href="#">Ver tudo em ${it.name}</a>`;
+}
+function renderMob(keepOpen){
+  const d = DATA[line], el = document.getElementById('v-mob');
+  const [hero, ...rest] = d.banners;
+  el.innerHTML = `
+    <div class="m-status"><span>9:41</span><span>●●● ▮</span></div>
+    <div class="m-top"><div class="grp"><button class="open" aria-label="Abrir menu">${I.menu}</button></div>${logoHTML()}<div class="grp">${I.search}${I.bag}</div></div>
+    ${segHTML()}
+    <div class="m-scroll">
+      <div class="m-grid">${banner(hero,800,1000,'wide')}${rest.map(b => banner(b,500,500)).join('')}</div>
+      <div class="m-cats"><h2 class="disp">${line==='performance'?'Linha de futebol':'Linha streetwear'}</h2><p class="kicker">Toque em ☰ para ver o menu completo.</p></div>
+    </div>
+    <div class="drawer${keepOpen?' open':''}">
+      <div class="m-status"><span>9:41</span><span>●●● ▮</span></div>
+      <div class="m-top"><div class="grp"><button class="close" aria-label="Fechar menu">${I.x}</button>${I.heart}</div>${logoHTML()}<div class="grp">${I.search}${I.bag}</div></div>
+      ${segHTML()}
+      <div class="viewport"><div class="panel root">${rootHTML()}</div><div class="panel sub"></div></div>
+    </div>`;
+  addDiamonds(el);
+}
+
+/* ---------- Estado e eventos ---------- */
+function setLine(l){
+  line = l;
+  document.querySelectorAll('.site').forEach(s => s.dataset.line = l);
+  const drawerOpen = !!document.querySelector('#v-mob .drawer.open');
+  renderDesk(); renderMob(drawerOpen);
+  document.querySelectorAll('.seg button').forEach(b => {
+    b.classList.toggle('on', b.dataset.set === l);
+    b.setAttribute('aria-selected', b.dataset.set === l);
+  });
+}
+
+document.addEventListener('click', e => {
+  const seg = e.target.closest('.seg button');
+  if (seg){ setLine(seg.dataset.set); return; }
+  const v = e.target.closest('.views button');
+  if (v){
+    document.querySelectorAll('.views button').forEach(b => { b.classList.toggle('on', b === v); b.setAttribute('aria-selected', b === v); });
+    document.getElementById('v-desk').hidden = v.dataset.view !== 'desk';
+    document.getElementById('v-mob').hidden = v.dataset.view !== 'mob';
+    return;
+  }
+  const mob = document.getElementById('v-mob');
+  if (e.target.closest('#v-mob .open')) mob.querySelector('.drawer').classList.add('open');
+  if (e.target.closest('#v-mob .close')){ mob.querySelector('.drawer').classList.remove('open'); }
+  const row = e.target.closest('#v-mob .root .row');
+  if (row){
+    const sub = mob.querySelector('.sub');
+    sub.innerHTML = subHTML(+row.dataset.s, +row.dataset.i); sub.scrollTop = 0;
+    sub.classList.add('open'); mob.querySelector('.root').classList.add('pushed');
+  }
+  if (e.target.closest('#v-mob .back')){
+    mob.querySelector('.sub').classList.remove('open'); mob.querySelector('.root').classList.remove('pushed');
+  }
+  if (e.target.closest('a')) e.preventDefault();
+});
+
+setLine('performance');
+</script>
+</body>
+</html>
